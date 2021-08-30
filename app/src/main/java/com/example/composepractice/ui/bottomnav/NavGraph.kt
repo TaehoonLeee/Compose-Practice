@@ -36,7 +36,7 @@ fun BottomNavApp() {
                     BottomNavigation {
                         BottomNavigationItem(
                             icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null) },
-                            label = { Text(text = Screen.Market.route)},
+                            label = { Text(text = Screen.Market.route) },
                             selected = currentTab == Screen.Market,
                             onClick = {
                                 currentTab = Screen.Market
@@ -45,7 +45,7 @@ fun BottomNavApp() {
                         )
                         BottomNavigationItem(
                             icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = null) },
-                            label = { Text(text = Screen.Landing.route)},
+                            label = { Text(text = Screen.Landing.route )},
                             selected = currentTab == Screen.Landing,
                             onClick = {
                                 currentTab = Screen.Landing
@@ -54,7 +54,7 @@ fun BottomNavApp() {
                         )
                         BottomNavigationItem(
                             icon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
-                            label = { Text(text = Screen.MyPage.route)},
+                            label = { Text(text = Screen.MyPage.route) },
                             selected = currentTab == Screen.MyPage,
                             onClick = {
                                 currentTab = Screen.MyPage
