@@ -1,7 +1,9 @@
 package com.example.composepractice.ui.gallery
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.domain.entity.UnsplashPhoto
 import com.example.domain.interactor.GetSearchResultUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +14,9 @@ class GalleryViewModel @Inject constructor(
     getSearchResultUseCase: GetSearchResultUseCase
 ) : ViewModel() {
 
-    val searchResult = getSearchResultUseCase.execute<PagingData<UnsplashPhoto>>(DEFAULT_QUERY)
+    val searchResult = getSearchResultUseCase
+        .execute<PagingData<UnsplashPhoto>>(DEFAULT_QUERY)
+        .cachedIn(viewModelScope)
 
     companion object {
         const val DEFAULT_QUERY = "cats"

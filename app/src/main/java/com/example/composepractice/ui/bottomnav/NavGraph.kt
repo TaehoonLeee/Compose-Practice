@@ -1,17 +1,17 @@
 package com.example.composepractice.ui.bottomnav
 
-import android.os.Bundle
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.composepractice.Screen
 import com.example.composepractice.ui.gallery.GalleryScreen
@@ -22,45 +22,27 @@ import com.example.composepractice.ui.theme.ComposePracticeTheme
 @Composable
 fun BottomNavApp() {
     val navController = rememberNavController()
-    val marketNavState = rememberSaveable(saver = NavStateSaver()) {
-        mutableStateOf(Bundle())
-    }
-    var currentTab by rememberSaveable(saver = ScreenSaver()) {
-        mutableStateOf(Screen.Landing)
-    }
+    val items = listOf(
+        Icons.Default.ShoppingCart to Screen.Market.route,
+        Icons.Default.Favorite to Screen.Landing.route,
+        Icons.Default.Person to Screen.MyPage.route
+    )
 
     ComposePracticeTheme {
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
                 bottomBar = {
                     BottomNavigation {
-                        BottomNavigationItem(
-                            icon = { Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null) },
-                            label = { Text(text = Screen.Market.route) },
-                            selected = currentTab == Screen.Market,
-                            onClick = {
-                                currentTab = Screen.Market
-                                navController.navigate(currentTab.route)
-                            }
-                        )
-                        BottomNavigationItem(
-                            icon = { Icon(imageVector = Icons.Default.Favorite, contentDescription = null) },
-                            label = { Text(text = Screen.Landing.route )},
-                            selected = currentTab == Screen.Landing,
-                            onClick = {
-                                currentTab = Screen.Landing
-                                navController.navigate(currentTab.route)
-                            }
-                        )
-                        BottomNavigationItem(
-                            icon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
-                            label = { Text(text = Screen.MyPage.route) },
-                            selected = currentTab == Screen.MyPage,
-                            onClick = {
-                                currentTab = Screen.MyPage
-                                navController.navigate(currentTab.route)
-                            }
-                        )
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentRoute = navBackStackEntry?.destination?.route
+
+                        items.forEach { (icon, route) ->
+                            BottomNavigationItem(
+                                icon = { Icon(imageVector = icon, contentDescription = null) },
+                                selected = currentRoute == route,
+                                onClick = { navigate(navController, route) }
+                            )
+                        }
                     }
                 }
             ) {
@@ -68,7 +50,7 @@ fun BottomNavApp() {
                     navController = navController,
                     startDestination = Screen.Landing.route,
                     builder = {
-                        addComposableDestinations(marketNavState)
+                        addComposableDestinations()
                     }
                 )
             }
@@ -76,7 +58,7 @@ fun BottomNavApp() {
     }
 }
 
-fun NavGraphBuilder.addComposableDestinations(marketState: MutableState<Bundle>) {
+fun NavGraphBuilder.addComposableDestinations() {
     composable(Screen.Landing.route) {
         GalleryScreen()
     }
@@ -84,16 +66,16 @@ fun NavGraphBuilder.addComposableDestinations(marketState: MutableState<Bundle>)
         MyPageScreen()
     }
     composable(Screen.Market.route) {
-        MarketScreen(navState = marketState)
+        MarketScreen()
     }
 }
 
-fun NavStateSaver(): Saver<MutableState<Bundle>, out Any> = Saver(
-    save = { it.value },
-    restore = { mutableStateOf(it) }
-)
-
-fun ScreenSaver(): Saver<MutableState<Screen>, *> = Saver(
-    save = { it.value.saveState() },
-    restore = { mutableStateOf(Screen.restoreState(it)) }
-)
+fun navigate(navController: NavController, route: String) {
+    navController.navigate(route) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+    }
+}

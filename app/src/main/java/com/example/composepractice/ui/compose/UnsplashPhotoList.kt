@@ -9,6 +9,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -36,15 +37,17 @@ fun UnsplashPhotoItem(
     photo: UnsplashPhoto?
 ) {
     val painter = rememberImagePainter(data = photo?.urls?.regular)
-    Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+    ) {
         Image(
             painter = painter,
             contentDescription = null,
-            modifier = Modifier.matchParentSize()
+            contentScale = ContentScale.None
         )
 
-        when (painter.state) {
-            is ImagePainter.State.Loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-        }
+        if (painter.state is ImagePainter.State.Loading) CircularProgressIndicator(Modifier.align(Alignment.Center))
     }
 }
