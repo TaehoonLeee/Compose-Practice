@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.composepractice.Screen
+import com.example.composepractice.ui.bottomnav.Direction
 
 @Composable
 fun MyPageScreen() {
@@ -16,6 +16,6 @@ fun MyPageScreen() {
             .fillMaxSize()
             .then(Modifier.padding(8.dp))
     ) {
-        Text(text = Screen.MyPage.route)
+        Text(text = Direction.MyPage.route)
     }
 }
